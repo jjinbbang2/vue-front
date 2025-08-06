@@ -1,30 +1,44 @@
 <script setup>
-import HelloWorld from './components/HelloWorld.vue'
+import Header from './components/Header.vue';
+import Footer from './components/Footer.vue';
 </script>
 
 <template>
-  <div>
-    <a href="https://vite.dev" target="_blank">
-      <img src="/vite.svg" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://vuejs.org/" target="_blank">
-      <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
-    </a>
+  <div class="main-container">
+    <Header />
+    <section class="content">
+      <h1>Welcome to AllFleet</h1>
+      <p>Your trusted fleet management solution.</p>
+      <button class="cta-button">Get Started</button>
+    </section>
+    <Footer />
   </div>
-  <HelloWorld msg="Vite + Vue" />
 </template>
 
 <style scoped>
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
+.main-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 100vh;
+  background-color: #f0f2f5;
 }
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
+.content {
+  text-align: center;
+  padding: 2em;
 }
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
+.cta-button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 1em 2em;
+  font-size: 1.2em;
+  cursor: pointer;
+  border-radius: 5px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+.cta-button:hover {
+  background-color: #0056b3;
 }
 </style>
