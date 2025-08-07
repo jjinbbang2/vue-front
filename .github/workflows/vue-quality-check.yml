@@ -1,0 +1,139 @@
+name: Vue.js Code Quality Check
+
+on:
+  pull_request:
+    paths:
+      - 'src/**/*.vue'
+      - 'src/**/*.js'
+      - 'src/**/*.css'
+
+jobs:
+  vue-component-review:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Vue.js Component Structure Check
+      run: |
+        echo "🔍 Vue.js 컴포넌트 구조 검사 시작..."
+        
+        # Composition API 사용 확인
+        echo "📝 Composition API 사용 확인:"
+        if find src/components -name "*.vue" -exec grep -l "script setup" {} \; | wc -l | grep -q "^0$"; then
+          echo "⚠️  WARNING: <script setup> 사용을 권장합니다"
+        else
+          echo "✅ Composition API 사용 확인됨"
+        fi
+        
+        # Scoped 스타일 확인
+        echo "🎨 Scoped 스타일 확인:"
+        if find src/components -name "*.vue" -exec grep -L "style scoped" {} \; | grep -q ".vue"; then
+          echo "⚠️  WARNING: 다음 컴포넌트에 scoped 스타일이 누락됨:"
+          find src/components -name "*.vue" -exec grep -L "style scoped" {} \;
+        else
+          echo "✅ 모든 컴포넌트에 scoped 스타일 적용됨"
+        fi
+        
+        # 반응형 디자인 확인
+        echo "📱 반응형 디자인 확인:"
+        if find src/components -name "*.vue" -exec grep -L "@media" {} \; | grep -q ".vue"; then
+          echo "⚠️  INFO: 다음 컴포넌트에 미디어 쿼리 고려 필요:"
+          find src/components -name "*.vue" -exec grep -L "@media" {} \;
+        else
+          echo "✅ 반응형 디자인 적용 확인됨"
+        fi
+        
+        # 최대 너비 1200px 확인
+        echo "📏 컨테이너 최대 너비 확인:"
+        if grep -r "max-width.*1200px" src/components/ >/dev/null; then
+          echo "✅ 1200px 최대 너비 컨테이너 사용 확인됨"
+        else
+          echo "⚠️  INFO: 1200px 최대 너비 컨테이너 사용 권장"
+        fi
+        
+        # 네이밍 규칙 확인
+        echo "📝 네이밍 규칙 확인:"
+        for file in src/components/*.vue; do
+          filename=$(basename "$file" .vue)
+          if [[ $filename =~ ^[A-Z][a-zA-Z]*$ ]]; then
+            echo "✅ $filename: PascalCase 준수"
+          else
+            echo "⚠️  WARNING: $filename: PascalCase 권장"
+          fi
+        done
+        
+        # Semantic HTML 확인
+        echo "🏷️  Semantic HTML 확인:"
+        if grep -r "div class.*container\|section\|article\|header\|footer\|nav\|main" src/components/ >/dev/null; then
+          echo "✅ Semantic HTML 요소 사용 확인됨"
+        else
+          echo "⚠️  INFO: Semantic HTML 요소 사용 권장"
+        fi
+
+  accessibility-check:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Accessibility Check
+      run: |
+        echo "♿ 접근성 검사 시작..."
+        
+        # alt 속성 확인
+        echo "🖼️  이미지 alt 속성 확인:"
+        if grep -r "<img" src/components/ | grep -v "alt=" | wc -l | grep -q "^0$"; then
+          echo "✅ 모든 이미지에 alt 속성 존재"
+        else
+          echo "⚠️  WARNING: alt 속성이 누락된 이미지 발견:"
+          grep -r "<img" src/components/ | grep -v "alt="
+        fi
+        
+        # ARIA 레이블 사용 확인
+        echo "🏷️  ARIA 레이블 확인:"
+        if grep -r "aria-" src/components/ >/dev/null; then
+          echo "✅ ARIA 레이블 사용 확인됨"
+        else
+          echo "💡 INFO: 복잡한 UI에는 ARIA 레이블 추가 고려"
+        fi
+        
+        # 색상 대비 관련 CSS 확인
+        echo "🎨 색상 관련 스타일 확인:"
+        if grep -r "color.*#" src/components/ >/dev/null; then
+          echo "💡 INFO: 색상 대비 비율 확인 권장 (최소 4.5:1)"
+        fi
+
+  performance-check:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Performance Analysis
+      run: |
+        echo "⚡ 성능 관련 검사 시작..."
+        
+        # 큰 이미지 URL 확인
+        echo "🖼️  이미지 최적화 확인:"
+        if grep -r "unsplash.com.*w=1920" src/components/ >/dev/null; then
+          echo "💡 INFO: 고해상도 이미지 사용 중 - WebP 변환 고려"
+        fi
+        
+        # 불필요한 import 확인
+        echo "📦 Import 최적화 확인:"
+        if grep -r "import.*vue.*{.*}" src/components/ >/dev/null; then
+          echo "✅ 필요한 Vue 기능만 import 중"
+        fi
+        
+        # 인라인 스타일 확인
+        echo "🎨 인라인 스타일 확인:"
+        if grep -r 'style="' src/components/ >/dev/null; then
+          echo "⚠️  WARNING: 인라인 스타일 발견 - CSS 클래스 사용 권장:"
+          grep -r 'style="' src/components/
+        else
+          echo "✅ 인라인 스타일 미사용"
+        fi

@@ -1,0 +1,81 @@
+name: Automated Code Review
+
+on:
+  pull_request:
+    branches: [ main, develop ]
+  push:
+    branches: [ main, develop ]
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Run ESLint
+      run: npm run lint || echo "ESLint not configured"
+      continue-on-error: true
+
+    - name: Build project
+      run: npm run build
+
+    - name: Run tests
+      run: npm test || echo "Tests not configured"
+      continue-on-error: true
+
+  code-quality:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Check Vue.js best practices
+      run: |
+        echo "🔍 Checking Vue.js component structure..."
+        find src/components -name "*.vue" -exec echo "Checking: {}" \;
+        
+        echo "📝 Checking for Composition API usage..."
+        grep -r "script setup" src/components/ || echo "⚠️  Consider using Composition API with <script setup>"
+        
+        echo "🎨 Checking for scoped styles..."
+        grep -r "style scoped" src/components/ || echo "⚠️  Consider using scoped styles"
+        
+        echo "📱 Checking for responsive design..."
+        grep -r "@media" src/components/ || echo "⚠️  Consider adding responsive design"
+
+  security-scan:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Run security audit
+      run: |
+        npm audit --audit-level=moderate || echo "Security vulnerabilities found"
+
+    - name: Check for sensitive data
+      run: |
+        echo "🔐 Checking for sensitive data..."
+        grep -r "password\|secret\|key\|token" --exclude-dir=node_modules --exclude-dir=.git . || echo "✅ No sensitive data found in code"

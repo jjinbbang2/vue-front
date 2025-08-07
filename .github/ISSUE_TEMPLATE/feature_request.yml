@@ -1,0 +1,106 @@
+name: ✨ Feature Request
+description: 새로운 기능 제안을 위한 템플릿
+title: "[FEATURE] "
+labels: ["enhancement", "needs-discussion"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        AllFleet 프로젝트에 새로운 기능을 제안해주셔서 감사합니다!
+
+  - type: input
+    id: feature-title
+    attributes:
+      label: ✨ 기능 제목
+      description: 제안하고자 하는 기능의 간단한 제목
+      placeholder: 예) 다크 모드 지원
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem-description
+    attributes:
+      label: 🤔 해결하고자 하는 문제
+      description: 현재 어떤 문제나 불편함이 있나요?
+      placeholder: 밤에 웹사이트를 사용할 때 눈이 부셔서 사용하기 어려움
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposed-solution
+    attributes:
+      label: 💡 제안하는 해결책
+      description: 어떤 방식으로 해결하고 싶나요?
+      placeholder: |
+        - 헤더에 다크모드 토글 버튼 추가
+        - 로컬스토리지에 사용자 선택 저장
+        - CSS 변수를 활용한 테마 시스템 구축
+    validations:
+      required: true
+
+  - type: dropdown
+    id: feature-category
+    attributes:
+      label: 📂 기능 카테고리
+      description: 어떤 분야의 기능인가요?
+      options:
+        - UI/UX 개선
+        - 새로운 페이지/컴포넌트
+        - 성능 최적화
+        - 접근성 개선
+        - 모바일 기능
+        - API 통합
+        - 기타
+    validations:
+      required: true
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: ⚡ 우선순위
+      description: 이 기능의 중요도는?
+      options:
+        - 낮음 (Nice to have)
+        - 보통 (Would be helpful)
+        - 높음 (Important)
+        - 긴급 (Critical)
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: affected-components
+    attributes:
+      label: 🎯 영향을 받는 컴포넌트
+      description: 어떤 컴포넌트가 영향을 받나요?
+      options:
+        - label: Header (네비게이션)
+        - label: Home (메인 페이지)
+        - label: Features (기능 소개)
+        - label: Contact (연락처)
+        - label: Footer
+        - label: 전체 앱
+        - label: 새로운 컴포넌트
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: 📋 추가 정보
+      description: 참고할 만한 링크, 이미지, 예시 등
+      placeholder: |
+        - 참고 사이트: https://example.com
+        - 디자인 시안이나 스크린샷
+        - 관련 이슈나 논의
+
+  - type: checkboxes
+    id: implementation-considerations
+    attributes:
+      label: 🔧 구현 고려사항
+      description: 구현 시 고려해야 할 사항들
+      options:
+        - label: 반응형 디자인 필요
+        - label: 접근성 고려 필요
+        - label: 성능 최적화 필요
+        - label: 브라우저 호환성 체크 필요
+        - label: API 키 또는 외부 서비스 연동 필요
+        - label: 사용자 데이터 저장 필요
+

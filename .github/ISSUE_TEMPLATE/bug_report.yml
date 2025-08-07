@@ -1,0 +1,106 @@
+name: 🐛 Bug Report
+description: 버그 신고를 위한 템플릿
+title: "[BUG] "
+labels: ["bug", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        AllFleet 프로젝트의 버그를 신고해주셔서 감사합니다.
+
+  - type: input
+    id: bug-summary
+    attributes:
+      label: 🐛 버그 요약
+      description: 버그에 대한 간단한 설명
+      placeholder: 예) Contact 페이지에서 카카오맵이 로드되지 않음
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction-steps
+    attributes:
+      label: 🔄 재현 단계
+      description: 버그를 재현하는 단계별 설명
+      placeholder: |
+        1. Contact 페이지 접속
+        2. 페이지 하단으로 스크롤
+        3. 지도 영역 확인
+        4. 지도가 표시되지 않음
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected-behavior
+    attributes:
+      label: ✅ 예상 동작
+      description: 어떻게 동작해야 하는지 설명
+      placeholder: 카카오맵이 정상적으로 표시되어야 함
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual-behavior
+    attributes:
+      label: ❌ 실제 동작
+      description: 실제로 어떻게 동작하는지 설명
+      placeholder: 지도 영역이 비어있고 에러 메시지가 콘솔에 표시됨
+    validations:
+      required: true
+
+  - type: dropdown
+    id: browsers
+    attributes:
+      label: 🌐 브라우저
+      description: 어떤 브라우저에서 발생하나요?
+      options:
+        - Chrome
+        - Firefox
+        - Safari
+        - Edge
+        - 기타
+      multiple: true
+    validations:
+      required: true
+
+  - type: dropdown
+    id: device-type
+    attributes:
+      label: 📱 디바이스 타입
+      description: 어떤 디바이스에서 발생하나요?
+      options:
+        - 데스크톱
+        - 태블릿
+        - 모바일
+        - 모든 디바이스
+    validations:
+      required: true
+
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: 🖼️ 스크린샷
+      description: 가능하다면 스크린샷을 첨부해주세요
+      placeholder: 이미지를 드래그하거나 붙여넣기 하세요
+
+  - type: textarea
+    id: console-logs
+    attributes:
+      label: 🔍 콘솔 로그
+      description: 브라우저 개발자 도구의 에러 메시지
+      render: shell
+
+  - type: checkboxes
+    id: component-related
+    attributes:
+      label: 🔧 관련 컴포넌트
+      description: 어떤 컴포넌트와 관련된 버그인가요?
+      options:
+        - label: Header (네비게이션)
+        - label: Home (메인 페이지)
+        - label: Features (기능 소개)
+        - label: Contact (연락처)
+        - label: Footer
+        - label: 라우팅
+        - label: 기타
+
