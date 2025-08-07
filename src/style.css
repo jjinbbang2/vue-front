@@ -32,6 +32,35 @@ body {
   width: 100% !important;
 }
 
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+  .container {
+    padding: 0 1rem !important;
+  }
+
+  h1 {
+    font-size: 2rem;
+  }
+
+  h2 {
+    font-size: 1.5rem;
+  }
+
+  h3 {
+    font-size: 1.2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 0 0.5rem !important;
+  }
+
+  h1 {
+    font-size: 1.8rem;
+  }
+}
+
 a {
   font-weight: 500;
   color: #007BFF;

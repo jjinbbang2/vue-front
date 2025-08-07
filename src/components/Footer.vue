@@ -40,4 +40,36 @@
 .footer nav ul li a:hover {
   text-decoration: underline;
 }
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+  .footer-content {
+    gap: 1rem;
+  }
+
+  .footer nav ul {
+    flex-direction: column;
+    gap: 0.5rem;
+    text-align: center;
+  }
+
+  .footer p {
+    font-size: 0.9rem;
+    margin: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .footer {
+    padding: 0.8rem;
+  }
+
+  .footer nav ul li a {
+    font-size: 0.8rem;
+  }
+
+  .footer p {
+    font-size: 0.8rem;
+  }
+}
 </style>
