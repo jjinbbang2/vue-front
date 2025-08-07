@@ -1,139 +1,176 @@
-name: Vue.js Code Quality Check
+name: Vue.js Quality Check
 
 on:
-  pull_request:
+  push:
+    branches: [ main, develop ]
     paths:
       - 'src/**/*.vue'
       - 'src/**/*.js'
-      - 'src/**/*.css'
+      - 'package*.json'
+  pull_request:
+    branches: [ main, develop ]
+    paths:
+      - 'src/**/*.vue'
+      - 'src/**/*.js'
+      - 'package*.json'
 
 jobs:
-  vue-component-review:
+  vue-analysis:
     runs-on: ubuntu-latest
+    name: Vue.js 코드 품질 분석
 
     steps:
-    - name: Checkout code
+    - name: Checkout
       uses: actions/checkout@v4
 
-    - name: Vue.js Component Structure Check
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Vue 컴포넌트 분석
       run: |
-        echo "🔍 Vue.js 컴포넌트 구조 검사 시작..."
+        echo "## 🔍 Vue.js 프로젝트 분석 결과" >> analysis.md
+        echo "" >> analysis.md
+        
+        # 컴포넌트 수 계산
+        COMPONENT_COUNT=$(find src/components -name "*.vue" 2>/dev/null | wc -l)
+        echo "### 📊 프로젝트 통계" >> analysis.md
+        echo "- **컴포넌트 수**: $COMPONENT_COUNT 개" >> analysis.md
+        
+        # Vue 파일 크기 분석
+        echo "- **Vue 파일 총 크기**: $(du -sh src/ | cut -f1)" >> analysis.md
+        
+        # 스타일 분석
+        SCOPED_STYLES=$(grep -r "style scoped" src/ | wc -l)
+        echo "- **Scoped 스타일 사용**: $SCOPED_STYLES 개 파일" >> analysis.md
         
         # Composition API 사용 확인
-        echo "📝 Composition API 사용 확인:"
-        if find src/components -name "*.vue" -exec grep -l "script setup" {} \; | wc -l | grep -q "^0$"; then
-          echo "⚠️  WARNING: <script setup> 사용을 권장합니다"
-        else
-          echo "✅ Composition API 사용 확인됨"
-        fi
+        SETUP_COUNT=$(grep -r "script setup" src/ | wc -l)
+        echo "- **Composition API 사용**: $SETUP_COUNT 개 파일" >> analysis.md
         
-        # Scoped 스타일 확인
-        echo "🎨 Scoped 스타일 확인:"
-        if find src/components -name "*.vue" -exec grep -L "style scoped" {} \; | grep -q ".vue"; then
-          echo "⚠️  WARNING: 다음 컴포넌트에 scoped 스타일이 누락됨:"
-          find src/components -name "*.vue" -exec grep -L "style scoped" {} \;
-        else
-          echo "✅ 모든 컴포넌트에 scoped 스타일 적용됨"
-        fi
+        echo "" >> analysis.md
+        echo "### 🎯 품질 체크리스트" >> analysis.md
         
-        # 반응형 디자인 확인
-        echo "📱 반응형 디자인 확인:"
-        if find src/components -name "*.vue" -exec grep -L "@media" {} \; | grep -q ".vue"; then
-          echo "⚠️  INFO: 다음 컴포넌트에 미디어 쿼리 고려 필요:"
-          find src/components -name "*.vue" -exec grep -L "@media" {} \;
-        else
-          echo "✅ 반응형 디자인 적용 확인됨"
-        fi
-        
-        # 최대 너비 1200px 확인
-        echo "📏 컨테이너 최대 너비 확인:"
-        if grep -r "max-width.*1200px" src/components/ >/dev/null; then
-          echo "✅ 1200px 최대 너비 컨테이너 사용 확인됨"
-        else
-          echo "⚠️  INFO: 1200px 최대 너비 컨테이너 사용 권장"
-        fi
-        
-        # 네이밍 규칙 확인
-        echo "📝 네이밍 규칙 확인:"
-        for file in src/components/*.vue; do
-          filename=$(basename "$file" .vue)
-          if [[ $filename =~ ^[A-Z][a-zA-Z]*$ ]]; then
-            echo "✅ $filename: PascalCase 준수"
+        # 각 Vue 파일에 대한 체크
+        for file in $(find src -name "*.vue"); do
+          echo "#### $(basename $file)" >> analysis.md
+          
+          # Template 체크
+          if grep -q "<template>" "$file"; then
+            echo "- ✅ Template 구조 정상" >> analysis.md
           else
-            echo "⚠️  WARNING: $filename: PascalCase 권장"
+            echo "- ❌ Template 구조 누락" >> analysis.md
           fi
+          
+          # Script setup 체크
+          if grep -q "script setup" "$file"; then
+            echo "- ✅ Composition API 사용" >> analysis.md
+          else
+            echo "- ⚠️ Options API 사용 (Composition API 권장)" >> analysis.md
+          fi
+          
+          # Scoped 스타일 체크
+          if grep -q "style scoped" "$file"; then
+            echo "- ✅ Scoped 스타일 사용" >> analysis.md
+          else
+            echo "- ⚠️ Scoped 스타일 미사용" >> analysis.md
+          fi
+          
+          echo "" >> analysis.md
         done
         
-        # Semantic HTML 확인
-        echo "🏷️  Semantic HTML 확인:"
-        if grep -r "div class.*container\|section\|article\|header\|footer\|nav\|main" src/components/ >/dev/null; then
-          echo "✅ Semantic HTML 요소 사용 확인됨"
-        else
-          echo "⚠️  INFO: Semantic HTML 요소 사용 권장"
-        fi
+        echo "### 🚀 개선 권장사항" >> analysis.md
+        echo "1. **반응형 디자인**: 모든 컴포넌트에서 미디어 쿼리 확인" >> analysis.md
+        echo "2. **접근성**: alt 속성, aria-label 등 접근성 요소 추가" >> analysis.md
+        echo "3. **성능 최적화**: 이미지 lazy loading, 컴포넌트 분할 고려" >> analysis.md
+        echo "4. **코드 일관성**: ESLint, Prettier 설정 권장" >> analysis.md
 
-  accessibility-check:
+    - name: 반응형 디자인 체크
+      run: |
+        echo "" >> analysis.md
+        echo "### 📱 반응형 디자인 분석" >> analysis.md
+        
+        # CSS 미디어 쿼리 사용 확인
+        MEDIA_QUERIES=$(grep -r "@media" src/ | wc -l)
+        echo "- **미디어 쿼리 사용**: $MEDIA_QUERIES 개" >> analysis.md
+        
+        # 자주 사용되는 반응형 패턴 확인
+        FLEX_USAGE=$(grep -r "display: flex\|d-flex" src/ | wc -l)
+        echo "- **Flexbox 사용**: $FLEX_USAGE 개" >> analysis.md
+        
+        GRID_USAGE=$(grep -r "display: grid\|grid-template" src/ | wc -l)
+        echo "- **CSS Grid 사용**: $GRID_USAGE 개" >> analysis.md
+
+    - name: 분석 결과 업로드
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const fs = require('fs');
+          
+          if (fs.existsSync('analysis.md')) {
+            const analysis = fs.readFileSync('analysis.md', 'utf8');
+            
+            if (context.eventName === 'pull_request') {
+              await github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: analysis
+              });
+            }
+            
+            // Summary에도 추가
+            await core.summary.addRaw(analysis).write();
+          }
+
+  security-check:
     runs-on: ubuntu-latest
+    name: 보안 검사
 
     steps:
-    - name: Checkout code
+    - name: Checkout
       uses: actions/checkout@v4
 
-    - name: Accessibility Check
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+
+    - name: 의존성 보안 검사
       run: |
-        echo "♿ 접근성 검사 시작..."
-        
-        # alt 속성 확인
-        echo "🖼️  이미지 alt 속성 확인:"
-        if grep -r "<img" src/components/ | grep -v "alt=" | wc -l | grep -q "^0$"; then
-          echo "✅ 모든 이미지에 alt 속성 존재"
-        else
-          echo "⚠️  WARNING: alt 속성이 누락된 이미지 발견:"
-          grep -r "<img" src/components/ | grep -v "alt="
-        fi
-        
-        # ARIA 레이블 사용 확인
-        echo "🏷️  ARIA 레이블 확인:"
-        if grep -r "aria-" src/components/ >/dev/null; then
-          echo "✅ ARIA 레이블 사용 확인됨"
-        else
-          echo "💡 INFO: 복잡한 UI에는 ARIA 레이블 추가 고려"
-        fi
-        
-        # 색상 대비 관련 CSS 확인
-        echo "🎨 색상 관련 스타일 확인:"
-        if grep -r "color.*#" src/components/ >/dev/null; then
-          echo "💡 INFO: 색상 대비 비율 확인 권장 (최소 4.5:1)"
-        fi
+        npm audit --audit-level=moderate || echo "보안 취약점이 발견되었습니다."
 
-  performance-check:
-    runs-on: ubuntu-latest
-
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-
-    - name: Performance Analysis
+    - name: 환경변수 노출 검사
       run: |
-        echo "⚡ 성능 관련 검사 시작..."
+        echo "## 🔒 보안 검사 결과" >> security.md
+        echo "" >> security.md
         
-        # 큰 이미지 URL 확인
-        echo "🖼️  이미지 최적화 확인:"
-        if grep -r "unsplash.com.*w=1920" src/components/ >/dev/null; then
-          echo "💡 INFO: 고해상도 이미지 사용 중 - WebP 변환 고려"
-        fi
-        
-        # 불필요한 import 확인
-        echo "📦 Import 최적화 확인:"
-        if grep -r "import.*vue.*{.*}" src/components/ >/dev/null; then
-          echo "✅ 필요한 Vue 기능만 import 중"
-        fi
-        
-        # 인라인 스타일 확인
-        echo "🎨 인라인 스타일 확인:"
-        if grep -r 'style="' src/components/ >/dev/null; then
-          echo "⚠️  WARNING: 인라인 스타일 발견 - CSS 클래스 사용 권장:"
-          grep -r 'style="' src/components/
+        # API 키 노출 검사
+        if grep -r "api.key\|apikey\|secret\|password" src/ --exclude-dir=node_modules; then
+          echo "⚠️ **주의**: 하드코딩된 API 키나 비밀정보가 발견될 수 있습니다." >> security.md
+          echo "환경변수(.env) 사용을 권장합니다." >> security.md
         else
-          echo "✅ 인라인 스타일 미사용"
+          echo "✅ 하드코딩된 민감정보 없음" >> security.md
         fi
+        
+        echo "" >> security.md
+        echo "### 보안 권장사항" >> security.md
+        echo "- 카카오맵 API 키는 환경변수로 관리" >> security.md
+        echo "- .env 파일은 .gitignore에 포함" >> security.md
+        echo "- 정기적인 의존성 업데이트" >> security.md
+
+    - name: 보안 결과 업로드
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const fs = require('fs');
+          
+          if (fs.existsSync('security.md')) {
+            const security = fs.readFileSync('security.md', 'utf8');
+            await core.summary.addRaw(security).write();
+          }
