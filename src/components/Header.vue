@@ -1,34 +1,30 @@
 <template>
   <header class="header">
-    <div class="logo">
-      <router-link to="/" class="logo-link">
-        <h1>AllFleet</h1>
-      </router-link>
+    <div class="nav-container">
+      <router-link to="/" class="logo">AllFleet</router-link>
+
+      <!-- 햄버거 메뉴 버튼 -->
+      <button class="hamburger" @click="toggleMenu" :class="{ active: isMenuOpen }">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+
+      <!-- 네비게이션 메뉴 -->
+      <nav>
+        <ul class="nav-menu" :class="{ active: isMenuOpen }">
+          <li class="nav-item"><router-link to="/" @click="closeMenu">Home</router-link></li>
+          <li class="nav-item"><router-link to="/features" @click="closeMenu">Features</router-link></li>
+          <li class="nav-item"><router-link to="/contact" @click="closeMenu">Contact</router-link></li>
+        </ul>
+      </nav>
     </div>
-
-    <!-- 햄버거 메뉴 버튼 -->
-    <button class="hamburger" @click="toggleMenu" :class="{ active: isMenuOpen }">
-      <span></span>
-      <span></span>
-      <span></span>
-    </button>
-
-    <!-- 네비게이션 메뉴 -->
-    <nav class="nav" :class="{ active: isMenuOpen }">
-      <ul class="nav-menu">
-        <li><router-link to="/" class="nav-link" @click="closeMenu">Home</router-link></li>
-        <li><router-link to="/features" class="nav-link" @click="closeMenu">Features</router-link></li>
-        <li><router-link to="/contact" class="nav-link" @click="closeMenu">Contact</router-link></li>
-      </ul>
-    </nav>
-
-    <!-- 모바일 오버레이 -->
-    <div class="overlay" :class="{ active: isMenuOpen }" @click="closeMenu"></div>
   </header>
 </template>
 
 <script setup>
 import { ref } from 'vue'
+import '../styles/header.css'
 
 const isMenuOpen = ref(false)
 
@@ -52,19 +48,17 @@ const closeMenu = () => {
   position: relative;
 }
 
-.logo h1 {
+.logo {
   font-size: 1.8em;
   margin: 0;
-}
-
-.logo-link {
   color: white;
   text-decoration: none;
 }
 
 /* 데스크톱 네비게이션 */
-.nav {
-  display: block;
+.nav-container {
+  display: flex;
+  align-items: center;
 }
 
 .nav-menu {
@@ -75,22 +69,16 @@ const closeMenu = () => {
   margin: 0;
 }
 
-.nav-link {
-  color: white;
-  text-decoration: none;
+.nav-item {
+  position: relative;
+}
+
+.nav-item .router-link-exact-active {
   font-weight: bold;
-  padding: 0.5em 1em;
-  border-radius: 5px;
-  transition: background-color 0.3s ease;
-  display: block;
 }
 
-.nav-link:hover {
-  background-color: rgba(255, 255, 255, 0.1);
-}
-
-.nav-link.router-link-active {
-  background-color: rgba(255, 255, 255, 0.2);
+.nav-item .router-link-active {
+  color: rgba(255, 255, 255, 0.7);
 }
 
 /* 햄버거 메뉴 버튼 */
@@ -181,6 +169,10 @@ const closeMenu = () => {
     padding: 2rem 0;
   }
 
+  .nav-item {
+    width: 100%;
+  }
+
   .nav-link {
     padding: 1rem 2rem;
     font-size: 1.1rem;
@@ -198,7 +190,7 @@ const closeMenu = () => {
     padding: 0.8em 1em;
   }
 
-  .logo h1 {
+  .logo {
     font-size: 1.3em;
   }
 

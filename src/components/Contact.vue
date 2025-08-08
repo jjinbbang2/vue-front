@@ -88,6 +88,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
+import '../styles/contact.css'
 
 const form = ref({
   name: '',
