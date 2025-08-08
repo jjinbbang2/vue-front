@@ -7,7 +7,8 @@
           v-for="(slide, index) in slides"
           :key="index"
           :class="['slide', { active: currentSlide === index }]"
-          :style="{ backgroundImage: `url(${slide.image})` }"
+          class="slide-background"
+          :style="{ '--slide-bg-image': `url(${slide.image})` }"
         >
           <div class="slide-overlay"></div>
           <div class="slide-content">
@@ -202,14 +203,18 @@ onUnmounted(() => {
   left: 0;
   width: 100%;
   height: 100%;
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
   opacity: 0;
   transition: opacity 1s ease-in-out;
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.slide-background {
+  background-image: var(--slide-bg-image);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 .slide.active {

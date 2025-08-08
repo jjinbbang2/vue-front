@@ -130,7 +130,7 @@ const initKakaoMap = () => {
 
     // 인포윈도우 생성
     const infowindow = new kakao.maps.InfoWindow({
-      content: '<div style="padding:5px;">AllFleet 본사</div>'
+      content: '<div class="kakao-map-info">AllFleet 본사</div>'
     });
 
     // 마커에 클릭이벤트 등록
@@ -310,6 +310,11 @@ onMounted(() => {
 
 .map-info strong {
   color: #007bff;
+}
+
+/* Kakao Map Info Window Style */
+:global(.kakao-map-info) {
+  padding: 5px;
 }
 
 /* 반응형 디자인 */
