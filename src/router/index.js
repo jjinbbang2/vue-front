@@ -3,6 +3,7 @@ import Home from '../components/Home.vue'
 import Features from '../components/Features.vue'
 import Contact from '../components/Contact.vue'
 import Privacy from '../components/Privacy.vue'
+import Terms from '../components/Terms.vue'
 
 const routes = [
   {
@@ -24,6 +25,11 @@ const routes = [
     path: '/privacy',
     name: 'Privacy',
     component: Privacy
+  },
+  {
+    path: '/terms',
+    name: 'Terms',
+    component: Terms
   }
 ]
 

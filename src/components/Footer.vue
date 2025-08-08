@@ -5,7 +5,7 @@
       <nav>
         <ul>
           <li><router-link to="/privacy">개인정보처리방침</router-link></li>
-          <li><a href="#">이용약관</a></li>
+          <li><router-link to="/terms">이용약관</router-link></li>
           <li><router-link to="/contact">문의하기</router-link></li>
         </ul>
       </nav>
