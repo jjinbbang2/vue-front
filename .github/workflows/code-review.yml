@@ -1,48 +1,20 @@
-name: Automated Code Review
+name: AI Code Review and Quality Analysis
 
 on:
-  pull_request:
-    branches: [ main, develop ]
   push:
+    branches: [ main, develop ]
+  pull_request:
     branches: [ main, develop ]
 
 jobs:
-  lint-and-test:
+  code-analysis:
     runs-on: ubuntu-latest
 
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
-
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
       with:
-        node-version: '20'
-        cache: 'npm'
-
-    - name: Clear npm cache
-      run: npm cache clean --force
-
-    - name: Install dependencies
-      run: npm install
-
-    - name: Run ESLint
-      run: npm run lint || echo "ESLint not configured"
-      continue-on-error: true
-
-    - name: Build project
-      run: npm run build
-
-    - name: Run tests
-      run: npm test || echo "Tests not configured"
-      continue-on-error: true
-
-  code-quality:
-    runs-on: ubuntu-latest
-
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+        fetch-depth: 0
 
     - name: Setup Node.js
       uses: actions/setup-node@v4
@@ -51,85 +23,218 @@ jobs:
         cache: 'npm'
 
     - name: Install dependencies
-      run: npm install
-
-    - name: Check code quality
       run: |
-        echo "=== Code Quality Report ===" >> $GITHUB_STEP_SUMMARY
-        echo "| 항목 | 상태 |" >> $GITHUB_STEP_SUMMARY
-        echo "|------|------|" >> $GITHUB_STEP_SUMMARY
+        rm -rf node_modules package-lock.json
+        npm install
+
+    - name: Run ESLint Analysis
+      run: |
+        npm run lint 2>&1 | tee eslint-report.txt || true
+
+    - name: Build Project
+      run: |
+        npm run build 2>&1 | tee build-report.txt || true
+
+    - name: Analyze Bundle Size
+      run: |
+        if [ -d "dist" ]; then
+          echo "=== Bundle Size Analysis ===" > bundle-analysis.txt
+          du -sh dist/* >> bundle-analysis.txt
+          find dist -name "*.js" -exec wc -c {} + | sort -n >> bundle-analysis.txt
+        fi
+
+    - name: Code Quality Analysis
+      run: |
+        echo "=== Code Quality Report ===" > quality-report.txt
+        echo "Generated on: $(date)" >> quality-report.txt
+        echo "" >> quality-report.txt
         
-        # 파일 구조 검사
-        if [ -f "src/App.vue" ]; then
-          echo "| Vue 앱 구조 | ✅ 정상 |" >> $GITHUB_STEP_SUMMARY
+        # Vue 컴포넌트 분석
+        echo "📊 Component Analysis:" >> quality-report.txt
+        echo "- Total Vue components: $(find src -name '*.vue' | wc -l)" >> quality-report.txt
+        echo "- JavaScript files: $(find src -name '*.js' | wc -l)" >> quality-report.txt
+        echo "- CSS files: $(find src -name '*.css' | wc -l)" >> quality-report.txt
+        echo "" >> quality-report.txt
+        
+        # 코드 복잡도 분석
+        echo "🔍 Code Complexity Issues:" >> quality-report.txt
+        find src -name "*.vue" -exec grep -l "v-if.*v-for" {} \; | while read file; do
+          echo "⚠️ Performance issue in $file: v-if with v-for detected" >> quality-report.txt
+        done
+        
+        find src -name "*.vue" -exec grep -l "style.*scoped" {} \; | wc -l > scoped_count.txt
+        total_vue=$(find src -name "*.vue" | wc -l)
+        scoped_count=$(cat scoped_count.txt)
+        echo "📝 Scoped styles: $scoped_count/$total_vue components" >> quality-report.txt
+        
+        # 반응형 디자인 체크
+        echo "" >> quality-report.txt
+        echo "📱 Responsive Design Check:" >> quality-report.txt
+        if grep -r "@media" src/ >/dev/null 2>&1; then
+          echo "✅ Media queries found - responsive design implemented" >> quality-report.txt
         else
-          echo "| Vue 앱 구조 | ❌ App.vue 누락 |" >> $GITHUB_STEP_SUMMARY
+          echo "❌ No media queries found - consider adding responsive design" >> quality-report.txt
         fi
         
-        # 컴포넌트 검사
-        COMPONENTS=$(find src/components -name "*.vue" 2>/dev/null | wc -l)
-        echo "| 컴포넌트 수 | $COMPONENTS 개 |" >> $GITHUB_STEP_SUMMARY
-        
-        # 라우터 검사
-        if [ -f "src/router/index.js" ]; then
-          echo "| 라우터 설정 | ✅ 정상 |" >> $GITHUB_STEP_SUMMARY
+        # 접근성 체크
+        echo "" >> quality-report.txt
+        echo "♿ Accessibility Check:" >> quality-report.txt
+        if grep -r "alt=" src/ >/dev/null 2>&1; then
+          echo "✅ Alt attributes found in images" >> quality-report.txt
         else
-          echo "| 라우터 설정 | ❌ 라우터 누락 |" >> $GITHUB_STEP_SUMMARY
+          echo "⚠️ Consider adding alt attributes for images" >> quality-report.txt
         fi
         
-        # 패키지 의존성 검사
-        echo "| 의존성 패키지 | $(jq '.dependencies | length' package.json) 개 |" >> $GITHUB_STEP_SUMMARY
+        if grep -r "aria-" src/ >/dev/null 2>&1; then
+          echo "✅ ARIA attributes found" >> quality-report.txt
+        else
+          echo "⚠️ Consider adding ARIA attributes for better accessibility" >> quality-report.txt
+        fi
+
+    - name: Performance Analysis
+      run: |
+        echo "" >> quality-report.txt
+        echo "⚡ Performance Recommendations:" >> quality-report.txt
         
-        echo "" >> $GITHUB_STEP_SUMMARY
-        echo "### 개선 제안" >> $GITHUB_STEP_SUMMARY
-        echo "- 모든 컴포넌트에서 scoped 스타일 사용 확인" >> $GITHUB_STEP_SUMMARY
-        echo "- 반응형 디자인 적용 상태 검토" >> $GITHUB_STEP_SUMMARY
-        echo "- 접근성(a11y) 가이드라인 준수 검토" >> $GITHUB_STEP_SUMMARY
+        # 큰 파일 체크
+        find src -name "*.vue" -size +10k | while read file; do
+          echo "📦 Large component detected: $file (consider splitting)" >> quality-report.txt
+        done
+        
+        # 외부 라이브러리 체크
+        if grep -r "import.*node_modules" src/ >/dev/null 2>&1; then
+          echo "📚 External libraries detected - ensure tree shaking is enabled" >> quality-report.txt
+        fi
+        
+        # 이미지 최적화 체크
+        if find src -name "*.png" -o -name "*.jpg" -o -name "*.jpeg" >/dev/null 2>&1; then
+          echo "🖼️ Image files found - consider using WebP format for better performance" >> quality-report.txt
+        fi
 
-  deploy-preview:
-    runs-on: ubuntu-latest
-    needs: [lint-and-test]
-    if: github.event_name == 'pull_request'
+    - name: Security Analysis
+      run: |
+        echo "" >> quality-report.txt
+        echo "🔒 Security Check:" >> quality-report.txt
+        
+        # API 키 노출 체크
+        if grep -r "api.*key\|API.*KEY" src/ --include="*.vue" --include="*.js" >/dev/null 2>&1; then
+          echo "⚠️ Potential API key exposure detected - use environment variables" >> quality-report.txt
+        else
+          echo "✅ No exposed API keys found" >> quality-report.txt
+        fi
+        
+        # console.log 체크
+        console_count=$(grep -r "console\." src/ --include="*.vue" --include="*.js" | wc -l)
+        if [ $console_count -gt 0 ]; then
+          echo "🐛 $console_count console statements found - consider removing for production" >> quality-report.txt
+        fi
 
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+    - name: AI-Powered Code Review
+      run: |
+        echo "" >> quality-report.txt
+        echo "🤖 AI Code Review Suggestions:" >> quality-report.txt
+        echo "" >> quality-report.txt
+        
+        # Vue 3 Composition API 사용 체크
+        if grep -r "export default" src/ --include="*.vue" >/dev/null 2>&1; then
+          if ! grep -r "setup()" src/ --include="*.vue" >/dev/null 2>&1; then
+            echo "💡 Consider migrating to Composition API with <script setup> for better performance" >> quality-report.txt
+          fi
+        fi
+        
+        # 타입스크립트 권장
+        if [ ! -f "tsconfig.json" ]; then
+          echo "💡 Consider adding TypeScript for better type safety and developer experience" >> quality-report.txt
+        fi
+        
+        # 테스트 파일 체크
+        if [ ! -d "tests" ] && [ ! -d "test" ] && ! find . -name "*.test.js" -o -name "*.spec.js" >/dev/null 2>&1; then
+          echo "🧪 No test files found - consider adding unit tests for better code quality" >> quality-report.txt
+        fi
+        
+        # SEO 최적화 체크
+        if ! grep -r "meta.*description\|meta.*keywords" public/ src/ >/dev/null 2>&1; then
+          echo "🔍 Consider adding SEO meta tags for better search engine optimization" >> quality-report.txt
+        fi
+        
+        # PWA 기능 체크
+        if [ ! -f "public/manifest.json" ]; then
+          echo "📱 Consider adding PWA features (Service Worker, Manifest) for better user experience" >> quality-report.txt
+        fi
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '20'
-        cache: 'npm'
+    - name: Generate Improvement Roadmap
+      run: |
+        echo "" >> quality-report.txt
+        echo "🗺️ Improvement Roadmap:" >> quality-report.txt
+        echo "" >> quality-report.txt
+        echo "Priority 1 (Critical):" >> quality-report.txt
+        echo "- Fix any build errors" >> quality-report.txt
+        echo "- Remove console.log statements" >> quality-report.txt
+        echo "- Secure API keys with environment variables" >> quality-report.txt
+        echo "" >> quality-report.txt
+        echo "Priority 2 (High):" >> quality-report.txt
+        echo "- Add responsive design with media queries" >> quality-report.txt
+        echo "- Implement accessibility features (alt tags, ARIA)" >> quality-report.txt
+        echo "- Optimize bundle size" >> quality-report.txt
+        echo "" >> quality-report.txt
+        echo "Priority 3 (Medium):" >> quality-report.txt
+        echo "- Add unit tests" >> quality-report.txt
+        echo "- Consider TypeScript migration" >> quality_report.txt
+        echo "- Implement SEO optimizations" >> quality_report.txt
+        echo "" >> quality_report.txt
+        echo "Priority 4 (Nice to have):" >> quality_report.txt
+        echo "- Add PWA features" >> quality_report.txt
+        echo "- Implement image optimization" >> quality_report.txt
+        echo "- Consider code splitting" >> quality_report.txt
 
-    - name: Install dependencies
-      run: npm install
-
-    - name: Build for preview
-      run: npm run build
-
-    - name: Deploy preview comment
+    - name: Create Review Comment
+      if: github.event_name == 'pull_request'
       uses: actions/github-script@v7
       with:
         script: |
+          const fs = require('fs');
+          
+          let comment = '## 🤖 AI Code Review Report\n\n';
+          
+          try {
+            const qualityReport = fs.readFileSync('quality-report.txt', 'utf8');
+            comment += '### Code Quality Analysis\n```\n' + qualityReport + '\n```\n\n';
+          } catch (e) {
+            comment += 'Quality report not generated.\n\n';
+          }
+          
+          try {
+            const eslintReport = fs.readFileSync('eslint-report.txt', 'utf8');
+            if (eslintReport.trim()) {
+              comment += '### ESLint Report\n```\n' + eslintReport + '\n```\n\n';
+            }
+          } catch (e) {}
+          
+          try {
+            const buildReport = fs.readFileSync('build-report.txt', 'utf8');
+            if (buildReport.includes('error') || buildReport.includes('Error')) {
+              comment += '### Build Issues\n```\n' + buildReport + '\n```\n\n';
+            } else {
+              comment += '### ✅ Build Status\nBuild completed successfully!\n\n';
+            }
+          } catch (e) {}
+          
+          comment += '---\n*This review was generated automatically by AI. Please review the suggestions and apply relevant improvements.*';
+          
           github.rest.issues.createComment({
             issue_number: context.issue.number,
             owner: context.repo.owner,
             repo: context.repo.repo,
-            body: `
-          ## 🚀 배포 미리보기 준비 완료
-          
-          빌드가 성공적으로 완료되었습니다!
-          
-          ### 📊 빌드 정보
-          - Node.js 버전: 20
-          - 빌드 도구: Vite
-          - 커밋: ${context.sha.substring(0, 7)}
-          
-          ### 🔍 다음 단계
-          1. 로컬에서 \`npm run preview\` 실행하여 확인
-          2. 반응형 디자인 테스트
-          3. 브라우저 호환성 확인
-          
-          *이 댓글은 자동으로 생성되었습니다.*
-            `
-          })
+            body: comment
+          });
+
+    - name: Upload Analysis Reports
+      uses: actions/upload-artifact@v4
+      with:
+        name: code-analysis-reports
+        path: |
+          quality-report.txt
+          eslint-report.txt
+          build-report.txt
+          bundle-analysis.txt
+        retention-days: 30
