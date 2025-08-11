@@ -3,14 +3,14 @@
   width: 100%;
   padding-top: 70px;
   min-height: 100vh;
-  background: #f8f9fa;
+  background: #ffffff;
 }
 
 .contact-header {
   text-align: center;
   padding: 4rem 0 2rem;
-  background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
-  color: white;
+  background: #f8f9fa;
+  color: #333;
   margin-bottom: 4rem;
 }
 
@@ -22,7 +22,7 @@
 
 .contact-header p {
   font-size: 1.2rem;
-  opacity: 0.9;
+  color: #666;
   max-width: 600px;
   margin: 0 auto;
 }
@@ -36,15 +36,15 @@
 .contact-content {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 4rem;
+  gap: 3rem;
   margin-bottom: 4rem;
 }
 
 .contact-form-section {
-  background: white;
-  padding: 3rem;
-  border-radius: 16px;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  background: #ffffff;
+  padding: 2.5rem;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
 }
 
 .contact-form-section h2 {
@@ -70,8 +70,8 @@
 .form-group select {
   width: 100%;
   padding: 1rem;
-  border: 2px solid #e9ecef;
-  border-radius: 8px;
+  border: 1px solid #e9ecef;
+  border-radius: 5px;
   font-size: 1rem;
   transition: border-color 0.3s ease;
   font-family: inherit;
@@ -81,8 +81,7 @@
 .form-group textarea:focus,
 .form-group select:focus {
   outline: none;
-  border-color: #007bff;
-  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+  border-color: #666;
 }
 
 .form-group textarea {
@@ -91,11 +90,11 @@
 }
 
 .submit-btn {
-  background: #007bff;
+  background: #333;
   color: white;
   padding: 1rem 2rem;
   border: none;
-  border-radius: 8px;
+  border-radius: 5px;
   font-size: 1.1rem;
   font-weight: 600;
   cursor: pointer;
@@ -104,23 +103,21 @@
 }
 
 .submit-btn:hover {
-  background: #0056b3;
+  background: #555;
   transform: translateY(-2px);
-  box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
 }
 
 .submit-btn:disabled {
-  background: #6c757d;
+  background: #999;
   cursor: not-allowed;
   transform: none;
-  box-shadow: none;
 }
 
 .contact-info-section {
-  background: white;
-  padding: 3rem;
-  border-radius: 16px;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  background: #f8f9fa;
+  padding: 2.5rem;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
 }
 
 .contact-info-section h2 {
@@ -136,28 +133,30 @@
 
 .info-item {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   margin-bottom: 1.5rem;
-  padding: 1rem;
-  background: #f8f9fa;
+  padding: 1.5rem;
+  background: #ffffff;
   border-radius: 8px;
+  border: 1px solid #e9ecef;
   transition: all 0.3s ease;
 }
 
 .info-item:hover {
-  background: #e9ecef;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
 }
 
 .info-icon {
   font-size: 1.5rem;
   margin-right: 1rem;
-  color: #007bff;
+  color: #666;
   width: 30px;
   text-align: center;
+  margin-top: 0.2rem;
 }
 
 .info-content h3 {
-  margin: 0 0 0.3rem 0;
+  margin: 0 0 0.5rem 0;
   color: #333;
   font-size: 1.1rem;
   font-weight: 600;
@@ -166,12 +165,13 @@
 .info-content p {
   margin: 0;
   color: #666;
+  line-height: 1.5;
 }
 
 .map-section {
-  background: white;
-  border-radius: 16px;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  background: #ffffff;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
   overflow: hidden;
   margin-bottom: 4rem;
 }
@@ -211,6 +211,10 @@
 
 .business-hours {
   margin-top: 2rem;
+  padding: 1.5rem;
+  background: #ffffff;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
 }
 
 .business-hours h3 {
@@ -222,12 +226,13 @@
 .hours-list {
   list-style: none;
   padding: 0;
+  margin: 0;
 }
 
 .hours-list li {
   display: flex;
   justify-content: space-between;
-  padding: 0.5rem 0;
+  padding: 0.8rem 0;
   border-bottom: 1px solid #e9ecef;
 }
 
@@ -245,19 +250,19 @@
 }
 
 .success-message {
-  background: #d4edda;
-  color: #155724;
+  background: #e8f5e8;
+  color: #2d5a2d;
   padding: 1rem;
-  border-radius: 8px;
+  border-radius: 5px;
   margin-bottom: 1rem;
-  border: 1px solid #c3e6cb;
+  border: 1px solid #c3e6c3;
 }
 
 .error-message {
-  background: #f8d7da;
+  background: #f8e8e8;
   color: #721c24;
   padding: 1rem;
-  border-radius: 8px;
+  border-radius: 5px;
   margin-bottom: 1rem;
   border: 1px solid #f5c6cb;
 }
@@ -311,6 +316,14 @@
   .map-container {
     height: 300px;
   }
+
+  .info-item {
+    padding: 1.2rem;
+  }
+
+  .business-hours {
+    padding: 1.2rem;
+  }
 }
 
 @media (max-width: 480px) {
@@ -344,11 +357,14 @@
   }
 
   .info-item {
-    padding: 0.8rem;
+    padding: 1rem;
+    flex-direction: column;
+    text-align: center;
   }
 
   .info-icon {
-    font-size: 1.3rem;
+    margin-right: 0;
+    margin-bottom: 0.5rem;
   }
 
   .map-header {
@@ -357,5 +373,9 @@
 
   .map-container {
     height: 250px;
+  }
+
+  .business-hours {
+    padding: 1rem;
   }
 }

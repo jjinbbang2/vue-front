@@ -43,9 +43,10 @@ const closeMenu = () => {
   justify-content: space-between;
   align-items: center;
   padding: 1em 2em;
-  background-color: #007bff;
+  background-color: #152553;
   color: white;
   position: relative;
+  width: 100%;
 }
 
 .logo {
@@ -58,7 +59,9 @@ const closeMenu = () => {
 /* 데스크톱 네비게이션 */
 .nav-container {
   display: flex;
+  justify-content: space-between;
   align-items: center;
+  width: 100%;
 }
 
 .nav-menu {
@@ -67,18 +70,30 @@ const closeMenu = () => {
   gap: 1.5em;
   padding: 0;
   margin: 0;
+  margin-left: auto;
 }
 
 .nav-item {
   position: relative;
 }
 
-.nav-item .router-link-exact-active {
-  font-weight: bold;
+.nav-item a {
+  color: white;
+  text-decoration: none;
+  padding: 0.5em 1em;
+  border-radius: 4px;
+  transition: color 0.3s ease;
 }
 
+.nav-item a:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.nav-item .router-link-exact-active,
 .nav-item .router-link-active {
-  color: rgba(255, 255, 255, 0.7);
+  color: #dc2626 !important;
+  font-weight: bold;
+  background-color: transparent !important;
 }
 
 /* 햄버거 메뉴 버튼 */
@@ -92,6 +107,7 @@ const closeMenu = () => {
   cursor: pointer;
   padding: 0.5em;
   z-index: 20;
+  margin-left: auto;
 }
 
 .hamburger span {
@@ -141,46 +157,48 @@ const closeMenu = () => {
     padding: 1em 2em;
   }
 
-  .hamburger {
-    display: flex;
+  .nav-container {
+    justify-content: space-between;
+    width: 100%;
   }
 
-  /* 모바일 슬라이드 메뉴 */
-  .nav {
+  .hamburger {
+    display: flex;
+    margin-left: auto;
+  }
+
+  .nav-menu {
     position: fixed;
     top: 0;
     right: 0;
     height: 100vh;
     width: 280px;
-    background-color: #007bff;
+    background-color: #152553;
     transform: translateX(100%);
     transition: transform 0.3s ease;
     z-index: 10;
-    padding-top: 80px;
-  }
-
-  .nav.active {
-    transform: translateX(0);
-  }
-
-  .nav-menu {
     flex-direction: column;
     gap: 0;
-    padding: 2rem 0;
+    padding: 4rem 0 2rem 0;
+  }
+
+  .nav-menu.active {
+    transform: translateX(0);
   }
 
   .nav-item {
     width: 100%;
   }
 
-  .nav-link {
+  .nav-item a {
     padding: 1rem 2rem;
     font-size: 1.1rem;
     border-radius: 0;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    display: block;
   }
 
-  .nav-link:hover {
+  .nav-item a:hover {
     background-color: rgba(255, 255, 255, 0.1);
   }
 }

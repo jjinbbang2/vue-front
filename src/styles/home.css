@@ -8,6 +8,7 @@
   position: relative;
   height: 100vh;
   overflow: hidden;
+  background: #f8f9fa;
 }
 
 .hero-slider {
@@ -42,7 +43,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, 0.3);
 }
 
 .slide-content {
@@ -58,7 +59,7 @@
   font-size: 3.5rem;
   margin-bottom: 1rem;
   font-weight: 700;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
 }
 
 .slide-content p {
@@ -69,24 +70,22 @@
 }
 
 .cta-button {
-  background: #007bff;
+  background: #333;
   color: white;
   padding: 1rem 2rem;
   border: none;
-  border-radius: 50px;
+  border-radius: 5px;
   font-size: 1.1rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
   text-decoration: none;
   display: inline-block;
-  box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
 }
 
 .cta-button:hover {
-  background: #0056b3;
+  background: #555;
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0, 123, 255, 0.4);
 }
 
 /* 슬라이드 네비게이션 */
@@ -150,7 +149,7 @@
 /* 서비스 섹션 */
 .services-section {
   padding: 5rem 0;
-  background: #f8f9fa;
+  background: #ffffff;
 }
 
 .container {
@@ -164,37 +163,39 @@
   font-size: 2.5rem;
   margin-bottom: 3rem;
   color: #333;
+  font-weight: 700;
 }
 
 .services-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 2rem;
 }
 
 .service-card {
-  background: white;
-  padding: 2rem;
-  border-radius: 12px;
+  background: #ffffff;
+  padding: 2.5rem;
+  border-radius: 8px;
   text-align: center;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: 1px solid #e9ecef;
+  transition: all 0.3s ease;
 }
 
 .service-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
 }
 
 .service-icon {
   font-size: 3rem;
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
 }
 
 .service-card h3 {
   font-size: 1.5rem;
   margin-bottom: 1rem;
   color: #333;
+  font-weight: 600;
 }
 
 .service-card p {
@@ -205,8 +206,7 @@
 /* 통계 섹션 */
 .stats-section {
   padding: 4rem 0;
-  background: #007bff;
-  color: white;
+  background: #f8f9fa;
 }
 
 .stats-grid {
@@ -217,18 +217,22 @@
 }
 
 .stat-item {
-  padding: 1rem;
+  padding: 2rem;
+  background: #ffffff;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
 }
 
 .stat-number {
   font-size: 3rem;
   font-weight: 700;
   margin-bottom: 0.5rem;
+  color: #333;
 }
 
 .stat-label {
   font-size: 1.1rem;
-  opacity: 0.9;
+  color: #666;
 }
 
 /* CTA 섹션 */
@@ -242,6 +246,7 @@
 .cta-section h2 {
   font-size: 2.5rem;
   margin-bottom: 1rem;
+  font-weight: 700;
 }
 
 .cta-section p {
@@ -283,6 +288,19 @@
     font-size: 2rem;
   }
 
+  .services-grid {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .service-card {
+    padding: 2rem;
+  }
+
+  .stat-item {
+    padding: 1.5rem;
+  }
+
   .stat-number {
     font-size: 2.5rem;
   }
@@ -307,9 +325,19 @@
 
   .services-grid {
     grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .service-card {
+    padding: 1.5rem;
   }
 
   .stats-grid {
     grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+
+  .stat-item {
+    padding: 1rem;
   }
 }
