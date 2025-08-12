@@ -14,6 +14,7 @@
       <nav>
         <ul class="nav-menu" :class="{ active: isMenuOpen }">
           <li class="nav-item"><router-link to="/" @click="closeMenu">Home</router-link></li>
+          <li class="nav-item"><router-link to="/about" @click="closeMenu">About</router-link></li>
           <li class="nav-item"><router-link to="/features" @click="closeMenu">Features</router-link></li>
           <li class="nav-item"><router-link to="/contact" @click="closeMenu">Contact</router-link></li>
         </ul>
